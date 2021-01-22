@@ -56,6 +56,7 @@ class App extends Component {
         let parsed = queryString.parse(window.location.search);
         let accessToken = parsed.access_token;
         if (!accessToken) return;
+
         fetch("https://api.spotify.com/v1/me", {
             headers: { Authorization: "Bearer " + accessToken },
         })
@@ -119,7 +120,7 @@ class App extends Component {
                                 "localhost"
                             )
                                 ? "http://localhost:8888/login"
-                                : "https://better-playlists-backend.herokuapp.com/login";
+                                : "https://spotify-display-backend.herokuapp.com/login";
                         }}
                         style={{
                             padding: "20px",
