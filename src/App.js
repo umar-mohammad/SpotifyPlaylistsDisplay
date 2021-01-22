@@ -9,7 +9,7 @@ let defaultStyle = {
 
 let fakeServerData = {
     user: {
-        name: "Umar",
+        name: "David",
         playlists: [
             {
                 name: "My favorites",
@@ -31,7 +31,7 @@ let fakeServerData = {
                 name: "Another playlist - the best!",
                 songs: [
                     { name: "Beat It", duration: 1345 },
-                    { name: "Cannelloni Makaroni", duration: 1236 },
+                    { name: "Hallelujah", duration: 1236 },
                     { name: "Rosa helikopter", duration: 70000 },
                 ],
             },
@@ -40,7 +40,7 @@ let fakeServerData = {
                 songs: [
                     { name: "Beat It", duration: 1345 },
                     { name: "Cannelloni Makaroni", duration: 1236 },
-                    { name: "Rosa helikopter", duration: 70000 },
+                    { name: "Hej Hej Monika", duration: 70000 },
                 ],
             },
         ],
@@ -67,14 +67,12 @@ class PlaylistCounter extends Component {
 
 class HoursCounter extends Component {
     render() {
-        let allSongs = this.props.playlists.reduce((songs, eachPlaylist) => {
-            return songs.concat(eachPlaylist.songs);
+        let songs = this.props.playlists.reduce((songs, playlist) => {
+            return songs.concat(playlist.songs);
         }, []);
-
-        let totalDuration = allSongs.reduce((sum, eachSong) => {
-            return sum + eachSong.duration;
+        let totalDuration = songs.reduce((sum, song) => {
+            return sum + song.duration;
         }, 0);
-
         return (
             <div
                 style={{
@@ -113,11 +111,11 @@ class Playlist extends Component {
                 }}
             >
                 <img />
-                <h3>Playlist Name</h3>
+                <h3>{this.props.playlist.name}</h3>
                 <ul>
-                    <li>Song 1</li>
-                    <li>Song 2</li>
-                    <li>Song 3</li>
+                    {this.props.playlist.songs.map((song) => (
+                        <li> {song.name} </li>
+                    ))}
                 </ul>
             </div>
         );
@@ -147,10 +145,11 @@ class App extends Component {
                             playlists={this.state.serverData.user.playlists}
                         />
                         <Filter />
-                        <Playlist />
-                        <Playlist />
-                        <Playlist />
-                        <Playlist />
+                        {this.state.serverData.user.playlists.map(
+                            (playlist) => (
+                                <Playlist playlist={playlist} />
+                            )
+                        )}
                     </div>
                 ) : (
                     <h1>Loading...</h1>
