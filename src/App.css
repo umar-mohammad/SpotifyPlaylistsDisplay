@@ -4,7 +4,7 @@
 
 html {
     background: rgba(5, 10, 20, 1);
-    background-image: linear-gradient(rgba(80, 85, 115, 1), rgba(5, 10, 20, 1));
+    background-image: linear-gradient(rgba(0, 35, 140, 1), rgba(0, 0, 0, 0.5));
     height: 200%;
 }
 
@@ -15,7 +15,7 @@ body {
 
 h1 {
     font-size: 54px;
-    color: #f87060;
+    color: #ff7060;
 }
 
 .App-logo {
@@ -25,6 +25,10 @@ h1 {
 
 li {
     list-style-type: none;
+}
+
+.image_div {
+    width: "30px";
 }
 
 @media (prefers-reduced-motion: no-preference) {

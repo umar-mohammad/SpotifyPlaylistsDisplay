@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import "./App.css";
+import queryString from "query-string";
 let defaultTextColor = "#fff";
 
 let defaultStyle = {
@@ -45,6 +46,94 @@ let fakeServerData = {
         ],
     },
 };
+
+class App extends Component {
+    constructor() {
+        super();
+        this.state = { serverData: {}, filterString: "" };
+    }
+    componentDidMount() {
+        let parsed = queryString.parse(window.location.search);
+        let accessToken = parsed.access_token;
+        if (!accessToken) return;
+        fetch("https://api.spotify.com/v1/me", {
+            headers: { Authorization: "Bearer " + accessToken },
+        })
+            .then((response) => response.json())
+            .then((data) =>
+                this.setState({
+                    user: {
+                        name: data.display_name,
+                    },
+                })
+            );
+
+        fetch("https://api.spotify.com/v1/me/playlists", {
+            headers: { Authorization: "Bearer " + accessToken },
+        })
+            .then((response) => response.json())
+            .then((data) =>
+                this.setState({
+                    playlists: data.items.map((item) => {
+                        console.log(data.items);
+                        return {
+                            name: item.name,
+                            imageUrl: item.images[0].url,
+                            songs: [],
+                        };
+                    }),
+                })
+            );
+    }
+    render() {
+        let playlistsToRender =
+            this.state.user && this.state.playlists
+                ? this.state.playlists.filter((playlist) =>
+                      playlist.name
+                          .toLowerCase()
+                          .includes(this.state.filterString.toLowerCase())
+                  )
+                : [];
+        return (
+            <div className="App">
+                {this.state.user ? (
+                    <div>
+                        <h1>{this.state.user.name}'s playlists</h1>
+                        <PlaylistCounter playlists={playlistsToRender} />
+                        <HoursCounter playlists={playlistsToRender} />
+                        <Filter
+                            onTextChange={(text) =>
+                                this.setState({ filterString: text })
+                            }
+                        />
+                        <td>
+                            {playlistsToRender.map((playlist) => (
+                                <Playlist playlist={playlist} />
+                            ))}
+                        </td>
+                    </div>
+                ) : (
+                    <button
+                        onClick={() => {
+                            window.location = window.location.href.includes(
+                                "localhost"
+                            )
+                                ? "http://localhost:8888/login"
+                                : "https://better-playlists-backend.herokuapp.com/login";
+                        }}
+                        style={{
+                            padding: "20px",
+                            "font-size": "50px",
+                            "margin-top": "20px",
+                        }}
+                    >
+                        Sign in with Spotify
+                    </button>
+                )}
+            </div>
+        );
+    }
+}
 
 class PlaylistCounter extends Component {
     render() {
@@ -114,7 +203,13 @@ class Playlist extends Component {
                     display: "inline-block",
                 }}
             >
-                <img />
+                <img
+                    src={this.props.playlist.imageUrl}
+                    style={{
+                        padding: "20px",
+                        width: "300px",
+                    }}
+                />
                 <h3>{this.props.playlist.name}</h3>
                 <ul>
                     {this.props.playlist.songs.map((song) => (
@@ -125,47 +220,4 @@ class Playlist extends Component {
         );
     }
 }
-
-class App extends Component {
-    constructor() {
-        super();
-        this.state = { serverData: {}, filterString: "" };
-    }
-    componentDidMount() {
-        setTimeout(() => {
-            this.setState({ serverData: fakeServerData });
-        }, 1000);
-    }
-    render() {
-        let playlistsToRender = this.state.serverData.user
-            ? this.state.serverData.user.playlists.filter((playlist) =>
-                  playlist.name
-                      .toLowerCase()
-                      .includes(this.state.filterString.toLowerCase())
-              )
-            : [];
-        return (
-            <div className="App">
-                {this.state.serverData.user ? (
-                    <div>
-                        <h1>{this.state.serverData.user.name}'s playlists</h1>
-                        <PlaylistCounter playlists={playlistsToRender} />
-                        <HoursCounter playlists={playlistsToRender} />
-                        <Filter
-                            onTextChange={(text) =>
-                                this.setState({ filterString: text })
-                            }
-                        />
-                        {playlistsToRender.map((playlist) => (
-                            <Playlist playlist={playlist} />
-                        ))}
-                    </div>
-                ) : (
-                    <h1>Loading...</h1>
-                )}
-            </div>
-        );
-    }
-}
-
 export default App;
