@@ -1,11 +1,15 @@
 .App {
   text-align: center;
-  background-image: linear-gradient(rgba(43, 25, 61, 1), rgba(72, 77, 109, 1));
+}
+
+html {
+  background-image: linear-gradient(rgba(72, 77, 109, 1), rgba(40, 20, 50, 1));
+  height: 100%;
 }
 
 h1 {
   font-size: 54px;
-  color: #f3f;
+  color: #f87060;
 }
 
 .App-logo {
