@@ -1,8 +1,11 @@
 import React, { Component } from "react";
 import "./App.css";
+import Playlist from "./Components/Playlist";
+import PlaylistCounter from "./Components/PlaylistCounter";
+import HoursCounter from "./Components/HoursCounter";
+import Filter from "./Components/Filter"
 import queryString from "query-string";
 let defaultTextColor = "#fff";
-
 let defaultStyle = {
     color: defaultTextColor,
 };
@@ -136,95 +139,5 @@ class App extends Component {
     }
 }
 
-class PlaylistCounter extends Component {
-    render() {
-        return (
-            <div
-                style={{
-                    ...defaultStyle,
-                    width: "40%",
-                    display: "inline-block",
-                }}
-            >
-                <h2 style={{ color: "#fff" }}>
-                    {this.props.playlists.length} Playlists
-                </h2>
-            </div>
-        );
-    }
-}
 
-class HoursCounter extends Component {
-    render() {
-        let songs = this.props.playlists.reduce((songs, playlist) => {
-            return songs.concat(playlist.songs);
-        }, []);
-        let totalDuration = songs.reduce((sum, song) => {
-            return sum + (isNaN(song.duration) ? 0 : song.duration);
-        }, 0);
-        return (
-            <div
-                style={{
-                    ...defaultStyle,
-                    width: "40%",
-                    display: "inline-block",
-                }}
-            >
-                {Math.round(totalDuration / 60) < 60 ? (
-                    <h2 style={{ color: "#fff" }}>
-                        {Math.round(totalDuration / 60)} Minutes
-                    </h2>
-                ) : (
-                    <h2 style={{ color: "#fff" }}>
-                        {Math.round(totalDuration / (60 * 60))} Hours
-                    </h2>
-                )}
-            </div>
-        );
-    }
-}
-
-class Filter extends Component {
-    render() {
-        return (
-            <div style={defaultStyle}>
-                <img />
-                <input
-                    type="text"
-                    onKeyUp={(event) =>
-                        this.props.onTextChange(event.target.value)
-                    }
-                />
-            </div>
-        );
-    }
-}
-
-class Playlist extends Component {
-    render() {
-        return (
-            <div
-                style={{
-                    ...defaultStyle,
-                    width: "25%",
-                    display: "inline-block",
-                }}
-            >
-                <img
-                    src={this.props.playlist.imageUrl}
-                    style={{
-                        padding: "20px",
-                        width: "300px",
-                    }}
-                />
-                <h2>{this.props.playlist.name}</h2>
-                <ul>
-                    {this.props.playlist.songs.slice(0, 3).map((song) => (
-                        <li> {song.name} </li>
-                    ))}
-                </ul>
-            </div>
-        );
-    }
-}
 export default App;

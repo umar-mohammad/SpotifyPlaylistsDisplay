@@ -4,6 +4,7 @@ import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 
+console.log("index.js file opened")
 ReactDOM.render(
   <React.StrictMode>
     <App />
