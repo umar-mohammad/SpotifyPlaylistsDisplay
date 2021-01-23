@@ -73,14 +73,48 @@ class App extends Component {
             headers: { Authorization: "Bearer " + accessToken },
         })
             .then((response) => response.json())
-            .then((data) =>
+            .then((playlistData) => {
+                let playlists = playlistData.items;
+                let trackDataPromises = playlists.map((playlist) => {
+                    //take each playlist and fetch its tracks
+                    let promises = fetch(playlist.tracks.href, {
+                        headers: { Authorization: "Bearer " + accessToken },
+                    });
+                    //transform the array of response objects to array into json objects we can use
+                    let tracksPromise = promises.then((response) =>
+                        response.json()
+                    );
+                    return tracksPromise;
+                });
+                //when all the promises have delivered
+                let playlistsPromise = Promise.all(trackDataPromises).then(
+                    (tracks_in_playlists) => {
+                        tracks_in_playlists.forEach((tracks, i) => {
+                            //take array of tracks and add them to the corresponding playlist
+                            playlists[i].tracks = tracks.items
+                                .map((item) => item.track)
+                                .map((trackData) =>
+                                    trackData != null
+                                        ? {
+                                              name: trackData.name,
+                                              duration:
+                                                  trackData.duration_ms / 1000,
+                                          }
+                                        : ""
+                                );
+                        });
+                        return playlists;
+                    }
+                );
+                return playlistsPromise;
+            })
+            .then((playlists) =>
                 this.setState({
-                    playlists: data.items.map((item) => {
-                        console.log(data.items);
+                    playlists: playlists.map((playlist) => {
                         return {
-                            name: item.name,
-                            imageUrl: item.images[0].url,
-                            songs: [],
+                            name: playlist.name,
+                            imageUrl: playlist.images[0].url,
+                            songs: playlist.tracks,
                         };
                     }),
                 })
@@ -107,11 +141,17 @@ class App extends Component {
                                 this.setState({ filterString: text })
                             }
                         />
-                        <td>
+                        <div
+                            style={{
+                                display: "flex",
+                                "flex-wrap": "wrap",
+                                margin: "10px",
+                            }}
+                        >
                             {playlistsToRender.map((playlist) => (
                                 <Playlist playlist={playlist} />
                             ))}
-                        </td>
+                        </div>
                     </div>
                 ) : (
                     <button
@@ -160,7 +200,7 @@ class HoursCounter extends Component {
             return songs.concat(playlist.songs);
         }, []);
         let totalDuration = songs.reduce((sum, song) => {
-            return sum + song.duration;
+            return sum + (isNaN(song.duration) ? 0 : song.duration);
         }, 0);
         return (
             <div
@@ -170,9 +210,15 @@ class HoursCounter extends Component {
                     display: "inline-block",
                 }}
             >
-                <h2 style={{ color: "#fff" }}>
-                    {Math.floor(totalDuration / 60)} Hours
-                </h2>
+                {Math.round(totalDuration / 60) < 60 ? (
+                    <h2 style={{ color: "#fff" }}>
+                        {Math.round(totalDuration / 60)} Minutes
+                    </h2>
+                ) : (
+                    <h2 style={{ color: "#fff" }}>
+                        {Math.round(totalDuration / (60 * 60))} Hours
+                    </h2>
+                )}
             </div>
         );
     }
@@ -213,7 +259,7 @@ class Playlist extends Component {
                 />
                 <h3>{this.props.playlist.name}</h3>
                 <ul>
-                    {this.props.playlist.songs.map((song) => (
+                    {this.props.playlist.songs.slice(0, 3).map((song) => (
                         <li> {song.name} </li>
                     ))}
                 </ul>

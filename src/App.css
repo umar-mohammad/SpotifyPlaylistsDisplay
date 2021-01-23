@@ -1,16 +1,22 @@
 .App {
     text-align: center;
 }
-
+/* 
 html {
     background: rgba(5, 10, 20, 1);
     background-image: linear-gradient(rgba(0, 35, 140, 1), rgba(0, 0, 0, 0.5));
     height: 200%;
-}
+} */
 
 body {
     overscroll-behavior-y: none;
     overscroll-behavior-x: none;
+    background: rgba(5, 10, 20, 1);
+    background-image: linear-gradient(rgba(0, 35, 140, 1), rgba(0, 0, 0, 10));
+    height: 100%;
+    margin: 0;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
 }
 
 h1 {
