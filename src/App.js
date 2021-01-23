@@ -217,7 +217,7 @@ class Playlist extends Component {
                         width: "300px",
                     }}
                 />
-                <h3>{this.props.playlist.name}</h3>
+                <h2>{this.props.playlist.name}</h2>
                 <ul>
                     {this.props.playlist.songs.slice(0, 3).map((song) => (
                         <li> {song.name} </li>
