@@ -7,46 +7,6 @@ let defaultStyle = {
     color: defaultTextColor,
 };
 
-let fakeServerData = {
-    user: {
-        name: "Umar",
-        playlists: [
-            {
-                name: "My favorites",
-                songs: [
-                    { name: "Beat It", duration: 1345 },
-                    { name: "Cannelloni Makaroni", duration: 1236 },
-                    { name: "Rosa helikopter", duration: 70000 },
-                ],
-            },
-            {
-                name: "Discover Weekly",
-                songs: [
-                    { name: "Beat It", duration: 1345 },
-                    { name: "Cannelloni Makaroni", duration: 1236 },
-                    { name: "Rosa helikopter", duration: 70000 },
-                ],
-            },
-            {
-                name: "Another playlist - the best!",
-                songs: [
-                    { name: "Beat It", duration: 1345 },
-                    { name: "Hallelujah", duration: 1236 },
-                    { name: "Rosa helikopter", duration: 70000 },
-                ],
-            },
-            {
-                name: "Playlist - yeah!",
-                songs: [
-                    { name: "Beat It", duration: 1345 },
-                    { name: "Cannelloni Makaroni", duration: 1236 },
-                    { name: "Hej Hej Monika", duration: 70000 },
-                ],
-            },
-        ],
-    },
-};
-
 class App extends Component {
     constructor() {
         super();
