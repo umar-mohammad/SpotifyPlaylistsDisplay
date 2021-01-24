@@ -1,10 +1,13 @@
 import React, { Component } from "react";
+import queryString from "query-string";
 import "./App.css";
 import Playlist from "./Components/Playlist";
 import PlaylistCounter from "./Components/PlaylistCounter";
 import HoursCounter from "./Components/HoursCounter";
-import Filter from "./Components/Filter"
-import queryString from "query-string";
+import Filter from "./Components/Filter";
+import Nav from "./Components/Nav";
+import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
+
 let defaultTextColor = "#fff";
 let defaultStyle = {
     color: defaultTextColor,
@@ -15,11 +18,8 @@ class App extends Component {
         super();
         this.state = { serverData: {}, filterString: "" };
     }
-    componentDidMount() {
-        let parsed = queryString.parse(window.location.search);
-        let accessToken = parsed.access_token;
-        if (!accessToken) return;
 
+    fetchUserData(accessToken) {
         fetch("https://api.spotify.com/v1/me", {
             headers: { Authorization: "Bearer " + accessToken },
         })
@@ -31,7 +31,9 @@ class App extends Component {
                     },
                 })
             );
+    }
 
+    fetchPlaylistData(accessToken) {
         fetch("https://api.spotify.com/v1/me/playlists", {
             headers: { Authorization: "Bearer " + accessToken },
         })
@@ -40,14 +42,15 @@ class App extends Component {
                 let playlists = playlistData.items;
                 let trackDataPromises = playlists.map((playlist) => {
                     //take each playlist and fetch its tracks
-                    let promises = fetch(playlist.tracks.href, {
+                    let trackPromise = fetch(playlist.tracks.href, {
                         headers: { Authorization: "Bearer " + accessToken },
                     });
                     //transform the array of response objects to array into json objects we can use
-                    let tracksPromise = promises.then((response) =>
+                    let tracksPromiseData = trackPromise.then((response) =>
                         response.json()
                     );
-                    return tracksPromise;
+                    // .then((result) => console.log(result));
+                    return tracksPromiseData;
                 });
                 //when all the promises have delivered
                 let playlistsPromise = Promise.all(trackDataPromises).then(
@@ -83,6 +86,16 @@ class App extends Component {
                 })
             );
     }
+
+    componentDidMount() {
+        let parsed = queryString.parse(window.location.search);
+        let accessToken = parsed.access_token;
+        if (!accessToken) return;
+
+        this.fetchUserData(accessToken);
+        this.fetchPlaylistData(accessToken);
+    }
+
     render() {
         let playlistsToRender =
             this.state.user && this.state.playlists
@@ -94,6 +107,7 @@ class App extends Component {
                 : [];
         return (
             <div className="App">
+                <Nav />
                 {this.state.user ? (
                     <div>
                         <h1>{this.state.user.name}'s playlists</h1>
@@ -138,6 +152,5 @@ class App extends Component {
         );
     }
 }
-
 
 export default App;
