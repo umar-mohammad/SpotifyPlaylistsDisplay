@@ -9,7 +9,9 @@ import Filter from "./../Components/Filter";
 class PlaylistPage extends Component {
     constructor() {
         super();
-        this.state = { serverData: {}, filterString: "" };
+        this.state = {
+            filterString: "",
+        };
     }
 
     fetchUserData(accessToken) {
@@ -84,7 +86,6 @@ class PlaylistPage extends Component {
         let parsed = queryString.parse(window.location.search);
         let accessToken = parsed.access_token;
         if (!accessToken) return;
-
         this.fetchUserData(accessToken);
         this.fetchPlaylistData(accessToken);
     }
@@ -102,7 +103,9 @@ class PlaylistPage extends Component {
             <div className="PlaylistPage">
                 {this.state.user ? (
                     <div>
-                        <h1>{this.state.user.name}'s playlists</h1>
+                        <h1 style={{ "margin-top": "7.5%" }}>
+                            {this.state.user.name}'s playlists
+                        </h1>
                         <PlaylistCounter playlists={playlistsToRender} />
                         <HoursCounter playlists={playlistsToRender} />
                         <Filter
@@ -132,9 +135,9 @@ class PlaylistPage extends Component {
                                 : "https://spotify-display-backend.herokuapp.com/login";
                         }}
                         style={{
-                            padding: "20px",
+                            padding: "10px",
                             "font-size": "50px",
-                            "margin-top": "20px",
+                            "margin-top": "15%",
                         }}
                     >
                         Sign in with Spotify
