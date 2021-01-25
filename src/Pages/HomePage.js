@@ -4,7 +4,7 @@ function HomePage() {
         <div>
             <Nav />
             <h1>this is the home page</h1>: (
-            <button
+            {/* <button
                 onClick={() => {
                     window.location = window.location.href.includes("localhost")
                         ? "http://localhost:8888/login"
@@ -18,7 +18,7 @@ function HomePage() {
             >
                 Sign in with Spotify
             </button>
-            )
+            ) */}
         </div>
     );
 }

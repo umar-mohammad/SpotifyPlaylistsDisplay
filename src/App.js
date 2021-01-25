@@ -8,6 +8,25 @@ import AboutPage from "./Pages/AboutPage";
 import HomePage from "./Pages/HomePage";
 
 class App extends Component {
+    constructor() {
+        super();
+        this.state = { logged: false, access_token: null };
+        this.login.bind(this);
+        this.getAccessToken.bind(this);
+    }
+
+    login = () => {
+        this.setState({ logged: true }, () =>
+            console.log("logged status: " + this.state.logged)
+        );
+    };
+
+    getAccessToken = (token) => {
+        this.setState({ access_token: token }, () =>
+            console.log("got access token: " + this.state.access_token)
+        );
+    };
+
     render() {
         return (
             <Router>
@@ -17,7 +36,15 @@ class App extends Component {
                         <Route path="/" exact component={HomePage}></Route>
                         <Route
                             path="/playlists"
-                            component={PlaylistPage}
+                            render={(props) => (
+                                <PlaylistPage
+                                    {...props}
+                                    login={this.login}
+                                    sendAccessToken={this.getAccessToken}
+                                    isLogged={this.state.logged}
+                                    accessToken={this.state.access_token}
+                                />
+                            )}
                         ></Route>
                         <Route path="/about" component={AboutPage}></Route>
                     </Switch>

@@ -7,11 +7,12 @@ import HoursCounter from "./../Components/HoursCounter";
 import Filter from "./../Components/Filter";
 
 class PlaylistPage extends Component {
-    constructor() {
-        super();
+    constructor(props) {
+        super(props);
         this.state = {
             filterString: "",
         };
+        console.log(props.isLogged);
     }
 
     fetchUserData(accessToken) {
@@ -83,11 +84,14 @@ class PlaylistPage extends Component {
     }
 
     componentDidMount() {
+        console.log("token from parent " + this.props.accessToken);
         let parsed = queryString.parse(window.location.search);
-        let accessToken = parsed.access_token;
+        let accessToken = this.props.accessToken || parsed.access_token;
         if (!accessToken) return;
         this.fetchUserData(accessToken);
         this.fetchPlaylistData(accessToken);
+        this.props.sendAccessToken(accessToken);
+        this.props.login();
     }
 
     render() {
@@ -101,29 +105,35 @@ class PlaylistPage extends Component {
                 : [];
         return (
             <div className="PlaylistPage">
-                {this.state.user ? (
+                {this.props.isLogged ? (
                     <div>
-                        <h1 style={{ "margin-top": "7.5%" }}>
-                            {this.state.user.name}'s playlists
-                        </h1>
-                        <PlaylistCounter playlists={playlistsToRender} />
-                        <HoursCounter playlists={playlistsToRender} />
-                        <Filter
-                            onTextChange={(text) =>
-                                this.setState({ filterString: text })
-                            }
-                        />
-                        <div
-                            style={{
-                                display: "flex",
-                                "flex-wrap": "wrap",
-                                margin: "10px",
-                            }}
-                        >
-                            {playlistsToRender.map((playlist) => (
-                                <Playlist playlist={playlist} />
-                            ))}
-                        </div>
+                        {this.state.user && (
+                            <div>
+                                <h1 style={{ "margin-top": "7.5%" }}>
+                                    {this.state.user.name}'s playlists
+                                </h1>
+                                <PlaylistCounter
+                                    playlists={playlistsToRender}
+                                />
+                                <HoursCounter playlists={playlistsToRender} />
+                                <Filter
+                                    onTextChange={(text) =>
+                                        this.setState({ filterString: text })
+                                    }
+                                />
+                                <div
+                                    style={{
+                                        display: "flex",
+                                        "flex-wrap": "wrap",
+                                        margin: "10px",
+                                    }}
+                                >
+                                    {playlistsToRender.map((playlist) => (
+                                        <Playlist playlist={playlist} />
+                                    ))}
+                                </div>
+                            </div>
+                        )}
                     </div>
                 ) : (
                     <button
