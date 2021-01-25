@@ -1,5 +1,6 @@
 @import url("https://fonts.googleapis.com/css2?family=Open+Sans&family=Roboto:wght@300&display=swap");
-.App {
+.App,
+.PlaylistPage {
     text-align: center;
 }
 
@@ -21,6 +22,7 @@ h1 {
 
 li {
     list-style-type: none;
+    margin: 10px 10px 10px -10px;
 }
 
 nav {
@@ -28,13 +30,13 @@ nav {
     justify-content: left;
     align-items: center;
     max-height: 5vh;
-    background-color: #000e30;
+    background-color: #000;
     color: white;
 }
 
 .nav-links {
-    width: 50%;
     display: flex;
-    justify-content: space-around;
+    justify-content: left;
     align-items: center;
+    font-weight: bold;
 }
