@@ -1,11 +1,11 @@
-import React, { Component } from "react";
+import React, { Component, Fragment } from "react";
 import queryString from "query-string";
 import "./../App.css";
 import Playlist from "./../Components/Playlist";
 import PlaylistCounter from "./../Components/PlaylistCounter";
 import HoursCounter from "./../Components/HoursCounter";
 import Filter from "./../Components/Filter";
-import logo from "./../Images/spotify/spotify_logo.svg";
+import LoginButton from "./../Components/LoginButton";
 
 class PlaylistPage extends Component {
     constructor(props) {
@@ -13,24 +13,52 @@ class PlaylistPage extends Component {
         this.state = {
             filterString: "",
         };
-        console.log(props.isLogged);
     }
 
     fetchUserData(accessToken) {
+        if (this.props.user === null) {
+            // console.log(`no user data from app yet`);
+        } else {
+            // console.log(`playlist page user data from app`);
+            this.setState({
+                user: {
+                    name: this.props.user.name,
+                },
+            });
+            return;
+        }
+
         fetch("https://api.spotify.com/v1/me", {
             headers: { Authorization: "Bearer " + accessToken },
         })
             .then((response) => response.json())
             .then((data) =>
-                this.setState({
-                    user: {
-                        name: data.display_name,
+                this.setState(
+                    {
+                        user: {
+                            name: data.display_name,
+                        },
                     },
-                })
+                    () => {
+                        this.props.sendUserData(data.display_name);
+                        console.log(`api called for user data`);
+                    }
+                )
             );
     }
 
     fetchPlaylistData(accessToken) {
+        let playlists = this.props.playlists;
+        if (playlists === null) {
+            // console.log(`no playlist data from app yet`);
+        } else {
+            // console.log(`playlist page user data from app ${playlists}`);
+            this.setState({
+                playlists: playlists,
+            });
+            return;
+        }
+
         fetch("https://api.spotify.com/v1/me/playlists", {
             headers: { Authorization: "Bearer " + accessToken },
         })
@@ -71,21 +99,26 @@ class PlaylistPage extends Component {
                 );
                 return playlistsPromise;
             })
-            .then((playlists) =>
+            .then((playlists) => {
+                let data = playlists.map((playlist) => {
+                    return {
+                        name: playlist.name,
+                        imageUrl: playlist.images[0].url,
+                        songs: playlist.tracks,
+                    };
+                });
+
                 this.setState({
-                    playlists: playlists.map((playlist) => {
-                        return {
-                            name: playlist.name,
-                            imageUrl: playlist.images[0].url,
-                            songs: playlist.tracks,
-                        };
-                    }),
-                })
-            );
+                    playlists: data,
+                });
+                this.props.sendPlaylistData(data);
+                console.log(`api called for playlist data`);
+                // console.log(data);
+            });
     }
 
     componentDidMount() {
-        console.log("token from parent " + this.props.accessToken);
+        // console.log("token from parent " + this.props.accessToken);
         let parsed = queryString.parse(window.location.search);
         let accessToken = this.props.accessToken || parsed.access_token;
         if (!accessToken) return;
@@ -137,31 +170,12 @@ class PlaylistPage extends Component {
                         )}
                     </div>
                 ) : (
-                    <div className="playlist-page">
+                    <Fragment>
                         <h1 className="big-font">
                             Let's get you signed in first
                         </h1>
-                        <button
-                            className="login-button"
-                            onClick={() => {
-                                window.location = window.location.href.includes(
-                                    "localhost"
-                                )
-                                    ? "http://localhost:8888/login"
-                                    : "https://spotify-display-backend.herokuapp.com/login";
-                            }}
-                            style={{
-                                display: "inline-block",
-                            }}
-                        >
-                            Sign in with{" "}
-                            <img
-                                className="spotify-logo-image"
-                                src={logo}
-                                alt="Logo"
-                            />
-                        </button>
-                    </div>
+                        <LoginButton />
+                    </Fragment>
                 )}
             </div>
         );

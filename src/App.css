@@ -30,7 +30,7 @@ nav {
     display: flex;
     justify-content: left;
     max-height: 5vh;
-    background-color: #000;
+    background-color: #050505;
 
     margin-left: -20px;
     position: fixed;
@@ -82,7 +82,8 @@ nav {
 
 .login-button:hover {
     box-shadow: 0px 0px 10px 1px #ff230a;
-    background: linear-gradient(to right, #ff7060, #5c86bd) !important;
+    background: linear-gradient(to right, #ff7565, #5c86bd) !important;
+    /* FF9185 */
     cursor: pointer;
 }
 
@@ -95,9 +96,7 @@ nav {
     margin-left: -12%;
 }
 
-.home-link,
-.about-link,
-.playlist-link {
+.navigation-link {
     color: white;
     margin-right: 5%;
     text-decoration: none;

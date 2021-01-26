@@ -1,115 +1,172 @@
-import React, { Component } from "react";
+import React, { Component, Fragment } from "react";
 import queryString from "query-string";
 import "./../App.css";
+import LoginButton from "./../Components/LoginButton";
+
 import Playlist from "./../Components/Playlist";
 import PlaylistCounter from "./../Components/PlaylistCounter";
 import HoursCounter from "./../Components/HoursCounter";
 import Filter from "./../Components/Filter";
-import logo from "./../Images/spotify/spotify_logo.svg";
 
 class TopPage extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            filterString: "",
+            user: null,
+            top_artists: [],
         };
-        console.log(props.isLogged);
     }
 
     fetchUserData(accessToken) {
+        if (this.props.user === null) {
+            // console.log(`no user data from app yet`);
+        } else {
+            // console.log(`top page got user data from app`);
+            this.setState({
+                user: {
+                    name: this.props.user.name,
+                },
+            });
+            return;
+        }
+
         fetch("https://api.spotify.com/v1/me", {
             headers: { Authorization: "Bearer " + accessToken },
         })
             .then((response) => response.json())
             .then((data) =>
-                this.setState({
-                    user: {
-                        name: data.display_name,
+                this.setState(
+                    {
+                        user: {
+                            name: data.display_name,
+                        },
                     },
-                })
+                    () => console.log(`api called for user data`)
+                )
             );
     }
 
-    fetchPlaylistData(accessToken) {
-        fetch("https://api.spotify.com/v1/me/playlists", {
+    fetchTopArtists(accessToken) {
+        if (this.props.artistData === null) {
+            // console.log(`no artist data from app yet`);
+        } else {
+            // console.log(`top page got artist data from app`);
+            this.setState({
+                top_artists: this.props.artistData,
+            });
+            return;
+        }
+
+        fetch("https://api.spotify.com/v1/me/top/artists", {
             headers: { Authorization: "Bearer " + accessToken },
         })
             .then((response) => response.json())
+            .then((artistsData) => {
+                let data = artistsData.items.map((artist) => {
+                    return {
+                        name: artist.name,
+                        imageUrl: artist.images[0].url,
+                        genres: artist.genres,
+                    };
+                });
+
+                this.setState({
+                    top_artists: data,
+                });
+                console.log(`api called for artist data`);
+                this.props.sendArtistData(data);
+            });
     }
 
     componentDidMount() {
+        this.setState({ isLogged: this.props.isLogged });
         let parsed = queryString.parse(window.location.search);
         let accessToken = this.props.accessToken || parsed.access_token;
-        if (!accessToken) return;
+        if (!accessToken) {
+            console.log(`trying to access top page but no access token`);
+            return;
+        }
+        this.props.login();
+        this.fetchTopArtists(accessToken);
+        this.fetchUserData(accessToken);
     }
 
     render() {
-        let playlistsToRender =
-            this.state.user && this.state.playlists
-                ? this.state.playlists.filter((playlist) =>
-                      playlist.name
-                          .toLowerCase()
-                          .includes(this.state.filterString.toLowerCase())
-                  )
-                : [];
         return (
-            <div className="playlist-page">
-                {this.props.isLogged ? (
-                    <div>
-                        {this.state.user && (
-                            <div>
-                                <h1 style={{ "margin-top": "7.5%" }}>
-                                    {this.state.user.name}'s playlists
-                                </h1>
-                                <PlaylistCounter
-                                    playlists={playlistsToRender}
-                                />
-                                <HoursCounter playlists={playlistsToRender} />
-                                <Filter
-                                    onTextChange={(text) =>
-                                        this.setState({ filterString: text })
-                                    }
-                                />
+            <div>
+                {this.state.isLogged ? (
+                    this.state.user && (
+                        <div className="top-page">
+                            {this.state.top_artists.map((artist) => (
                                 <div
                                     style={{
                                         display: "flex",
-                                        "flex-wrap": "wrap",
-                                        margin: "10px",
+                                        marginTop: "100px",
+                                        marginLeft: "50px",
                                     }}
                                 >
-                                    {playlistsToRender.map((playlist) => (
-                                        <Playlist playlist={playlist} />
-                                    ))}
+                                    <img
+                                        style={{
+                                            padding: "20px",
+                                            width: "400px",
+                                        }}
+                                        src={artist.imageUrl}
+                                    />
+                                    <div
+                                        style={{
+                                            display: "flex",
+                                            "flex-direction": "column",
+                                        }}
+                                    >
+                                        <h1
+                                            className="big-font"
+                                            style={{
+                                                marginLeft: "-1px",
+                                                marginTop: "-0.5%",
+                                                fontSize: "120px",
+                                            }}
+                                        >
+                                            {artist.name}
+                                        </h1>
+
+                                        <div
+                                            style={{
+                                                display: "flex",
+                                                "flex-direction": "row",
+                                                "flex-wrap": "wrap",
+                                                alignItems: "center",
+                                                padding: "20px",
+                                                marginLeft: "-15px",
+                                            }}
+                                        >
+                                            {artist.genres
+                                                .slice(0, 1)
+                                                .map((genere) => (
+                                                    <h2
+                                                        style={{
+                                                            "margin-top":
+                                                                "-150px",
+                                                            "margin-right":
+                                                                "20px",
+                                                            color: "#ff6050",
+                                                        }}
+                                                    >
+                                                        {genere}
+                                                    </h2>
+                                                ))}
+                                        </div>
+                                    </div>
                                 </div>
-                            </div>
-                        )}
-                    </div>
+                            ))}
+                        </div>
+                    )
                 ) : (
-                    <div className="playlist-page">
+                    <Fragment>
                         <h1 className="big-font">
                             Let's get you signed in first
                         </h1>
-                        <button
-                            className="login-button"
-                            onClick={() => {
-                                window.location = window.location.href.includes(
-                                    "localhost"
-                                )
-                                    ? "http://localhost:8888/login"
-                                    : "https://spotify-display-backend.herokuapp.com/login";
-                            }}
-                            style={{
-                                display: "inline-block",
-                            }}
-                        >
-                            Sign in with{" "}
-                            <img
-                                className="spotify-logo-image"
-                                src={logo}
-                                alt="Logo"
-                            />
-                        </button>
-                    </div>
+                        <LoginButton />
+                    </Fragment>
                 )}
             </div>
         );
