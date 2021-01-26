@@ -97,6 +97,17 @@ class TopPage extends Component {
                 {this.state.isLogged ? (
                     this.state.user && (
                         <div className="top-page">
+                            <h1></h1>
+                            <h1
+                                style={{
+                                    fontSize: "140px",
+                                    textAlign: "left",
+                                    marginLeft: "2%",
+                                    marginTop: "-1px",
+                                }}
+                            >
+                                The artists you listened to the most
+                            </h1>
                             {this.state.top_artists.map((artist) => (
                                 <div
                                     style={{
