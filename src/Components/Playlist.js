@@ -10,7 +10,7 @@ class Playlist extends Component {
                 style={{
                     ...defaultStyle,
                     width: "25%",
-                    display: "inline-block",
+                    textAlign: "center",
                 }}
             >
                 <img
@@ -21,7 +21,7 @@ class Playlist extends Component {
                     }}
                 />
                 <h2>{this.props.playlist.name}</h2>
-                <ul>
+                <ul className="playlist-info">
                     {this.props.playlist.songs.slice(0, 3).map((song) => (
                         <li> {song.name} </li>
                     ))}

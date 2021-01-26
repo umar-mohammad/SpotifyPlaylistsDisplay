@@ -1,24 +1,21 @@
-import Nav from "./../Components/Nav"
+import logo from "./../Images/spotify/spotify_logo.svg";
 function HomePage() {
     return (
-        <div>
-            <Nav />
-            <h1>this is the home page</h1>: (
-            {/* <button
+        <div className="home-page">
+            <h1 className="big-font">
+                Want to learn more about your music taste?{" "}
+            </h1>
+            <button
+                className="login-button"
                 onClick={() => {
                     window.location = window.location.href.includes("localhost")
                         ? "http://localhost:8888/login"
                         : "https://spotify-display-backend.herokuapp.com/login";
                 }}
-                style={{
-                    padding: "10px",
-                    "font-size": "50px",
-                    "margin-top": "15%",
-                }}
             >
-                Sign in with Spotify
+                Sign in with{" "}
+                <img className="spotify-logo-image" src={logo} alt="Logo" />
             </button>
-            ) */}
         </div>
     );
 }
