@@ -15,6 +15,9 @@ function Nav() {
                 <Link to="/top" className="navigation-link">
                     <li>Top</li>
                 </Link>
+                <Link to="/compare" className="navigation-link">
+                    <li>Compare</li>
+                </Link>
                 <Link id="about-link" to="/about" className="navigation-link">
                     <li>About</li>
                 </Link>

@@ -54,7 +54,8 @@ nav {
 }
 
 .home-page,
-.playlist-page {
+.playlist-page,
+.comparison-page {
     align-items: center;
     display: flex;
     flex-direction: column;

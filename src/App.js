@@ -7,6 +7,7 @@ import PlaylistPage from "./Pages/PlaylistPage";
 import AboutPage from "./Pages/AboutPage";
 import HomePage from "./Pages/HomePage";
 import TopPage from "./Pages/TopPage";
+import ComparisonPage from "./Pages/ComparisonPage";
 
 class App extends Component {
     constructor() {
@@ -116,6 +117,24 @@ class App extends Component {
                                     sendArtistData={this.getArtistData}
                                     user={this.state.user}
                                     artistData={this.state.artist_data}
+                                    isLogged={this.state.logged}
+                                    accessToken={this.state.access_token}
+                                />
+                            )}
+                        ></Route>
+                        <Route
+                            path="/compare"
+                            render={(props) => (
+                                <ComparisonPage
+                                    {...props}
+                                    login={this.login}
+                                    sendAccessToken={this.getAccessToken}
+                                    sendUserData={this.getUserData}
+                                    sendArtistData={this.getArtistData}
+                                    sendPlaylistData={this.getPlaylistsData}
+                                    user={this.state.user}
+                                    artistData={this.state.artist_data}
+                                    playlists={this.state.playlists}
                                     isLogged={this.state.logged}
                                     accessToken={this.state.access_token}
                                 />
